@@ -4,6 +4,7 @@ from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from blog_psql.settings import EMAIL_HOST_USER
 from django.views.decorators.http import require_POST
+from django.http import HttpResponceRedirect
 # Create your views here.
 
 def post_list(request):
@@ -48,7 +49,6 @@ def post_share(request, post_id):
                                                     'form': form,
                                                     'sent': sent})
 
-
 @require_POST
 def post_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id,
@@ -67,10 +67,6 @@ def post_comment(request, post_id):
                   {'post': post,
                    'form': form,
                    'comment': comment})
-
-
-
-
 
 
 

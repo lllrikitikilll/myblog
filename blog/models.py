@@ -25,10 +25,10 @@ class Post(models.Model):
         PUBLISHED = 'PB', 'Опубликованно'
 
     # Content
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, verbose_name='Название')
     slug = models.SlugField(max_length=200,
                             unique_for_date='publish')
-    body = models.TextField()
+    body = models.TextField(verbose_name='Текст')
     # Time
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
@@ -36,10 +36,10 @@ class Post(models.Model):
     # Status
     status = models.CharField(max_length=2,
                               choices=Status.choices,
-                              default=Status.DRAFT)
+                              default=Status.DRAFT, verbose_name='Статус')
     # Author
     author = models.ForeignKey(User, on_delete=models.CASCADE,
-                               related_name='blog_posts')  # Привязка постов к одному автору
+                               related_name='blog_posts', verbose_name='Автор')  # Привязка постов к одному автору
 
     def __str__(self):
         return self.title
