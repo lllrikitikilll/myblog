@@ -2,7 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
-
+from datetime import datetime
+from taggit.managers import TaggableManager
 
 # Create your models here.
 
@@ -30,7 +31,7 @@ class Post(models.Model):
                             unique_for_date='publish')
     body = models.TextField(verbose_name='Текст')
     # Time
-    publish = models.DateTimeField(default=timezone.now)
+    publish = models.DateTimeField(default=datetime.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # Status
@@ -40,6 +41,7 @@ class Post(models.Model):
     # Author
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='blog_posts', verbose_name='Автор')  # Привязка постов к одному автору
+    tag = TaggableManager()
 
     def __str__(self):
         return self.title
