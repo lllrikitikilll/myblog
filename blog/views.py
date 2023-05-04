@@ -4,7 +4,6 @@ from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from blog_psql.settings import EMAIL_HOST_USER
 from django.views.decorators.http import require_POST
-from django.http import HttpResponceRedirect
 # Create your views here.
 
 def post_list(request):
