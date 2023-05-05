@@ -4,12 +4,18 @@ from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from blog_psql.settings import EMAIL_HOST_USER
 from django.views.decorators.http import require_POST
+from taggit.models import Tag
 # Create your views here.
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     """Возвращает ответ text/html с постами со статусом 'PB' """
     posts = Post.published.all()
-    return render(request, 'blog/post/list.html', {'posts': posts})
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts = posts.filter(tag__in=tag)
+    return render(request, 'blog/post/list.html', {'posts': posts,
+                                                   'tag': tag})
 
 
 def post_detail(request, year, month, day, post_slug):

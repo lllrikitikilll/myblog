@@ -7,12 +7,21 @@
 
 {% block content %}
     <h1>Лента постов</h1>
+    {% if tag %}
+      <h2>Посты по тегу "{{ tag.name }}"</h2>
+    {% endif %}
     {% for post in posts %}
         <h2>
             <a href="{{ post.get_absolute_url }}">
                 {{ post.title }}
             </a>
         </h2>
+        <p class="tags">
+          {% for tag in post.tag.all %}
+            <a href='{% url "blog:post_list_by_tag" tag.slug %}'>
+              {{ tag.name }}
+            </a>
+        </p>
         <p class="date">
             Опубликовано {{ post.publish }}, автор: {{ post.author }}
         </p>
