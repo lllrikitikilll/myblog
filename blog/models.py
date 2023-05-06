@@ -8,8 +8,6 @@ from taggit.managers import TaggableManager
 # Create your models here.
 
 # менеджер извлечения объектов из БД со статусом "PB"-"Опубликовано"
-
-
 class PublishedManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status=Post.Status.PUBLISHED)
@@ -30,7 +28,7 @@ class Post(models.Model):
                             unique_for_date='publish')
     body = models.TextField(verbose_name='Текст')
     # Time
-    publish = models.DateTimeField(default=timezone.localtime)
+    publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     # Status

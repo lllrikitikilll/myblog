@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Count
 from .models import Post, Comment
 from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
@@ -13,7 +14,7 @@ def post_list(request, tag_slug=None):
     tag = None
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
-        posts = posts.filter(tag__in=tag)
+        posts = posts.filter(tag__in=[tag])
     return render(request, 'blog/post/list.html', {'posts': posts,
                                                    'tag': tag})
 
@@ -26,11 +27,22 @@ def post_detail(request, year, month, day, post_slug):
                              publish__year=year,
                              publish__month=month,
                              publish__day=day)
+    # Список активных комметариев
     comments = post.comments.filter(active=True)
+    # Форма для ввода комментариев
     form = CommentForm()
+    
+    # Список схожих постов
+    post_tags_ids = post.tag.values_list('id', flat=True)
+    
+    similar_posts = Post.published.filter(tag__in=post_tags_ids).exclude(id=post.id)
+    
+    similar_posts = similar_posts.annotate(same_tags=Count('tag')).order_by('-same_tags', '-publish')[:4]
+
     return render(request, 'blog/post/detail.html', {'post': post,
                                                      'comments': comments,
-                                                     "form": form})
+                                                     "form": form,
+                                                     'similar_posts': similar_posts})
 
 def post_share(request, post_id):
     post = get_object_or_404(Post,
