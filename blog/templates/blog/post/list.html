@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-
+{% load blog_tags %}
 {% block title %}
 Все посты
 {% endblock %}
@@ -17,16 +17,18 @@
             </a>
         </h2>
         <p class="tags">
+          Теги: 
           {% for tag in post.tag.all %}
             <a href='{% url "blog:post_list_by_tag" tag.slug %}'>
               {{ tag.name }}
             </a>
             {% if not forloop.last %}, {% endif %}
-          {% endfor %}
+            {% endfor %}
         </p>
-        <p class="date">
+          <p class="date">
             Опубликовано {{ post.publish }}, автор: {{ post.author }}
-        </p>
-        {{ post.body|truncatewords:30|linebreaks }}
+          </p>
+          {{ post.body|markdown|truncatewords_html:30 }}
+      <br>
     {% endfor %}
 {% endblock %}
