@@ -1,12 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from .models import Post, Comment
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, SearchForm
 from django.core.mail import send_mail
 from blog_psql.settings import EMAIL_HOST_USER
 from django.views.decorators.http import require_POST
 from taggit.models import Tag
+
 # Create your views here.
+
 
 def post_list(request, tag_slug=None):
     """Возвращает ответ text/html с постами со статусом 'PB' """
@@ -86,20 +89,15 @@ def post_comment(request, post_id):
                    'comment': comment})
 
 
+def post_search(request):
+    form = SearchForm()
+    query = None
+    results = []
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            possts = Post.objects.all()
+            query = form.cleaned_data['query']
+            results = Post.published.annotate(search=SearchVector('title', 'body', config='english')).filter(search=query)
+    return render(request, 'blog/post/search.html', {'form': form, 'query': query, 'results': results, 'passts': possts})

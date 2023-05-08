@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+{% load blog_tags %}
+
+{% block title %}Поиск{% endblock %}
+
+{% block content %}
+    {% if query %}
+        <h1>Посты по запросу {{ query }}</h1>
+        <h3>
+            {% with results.count as total_results %}
+                Найдено {{ total_results }} совпадений.
+            {% endwith %}
+        </h3>
+        {% for post in results %}
+            <h4>
+                <a href="{{ post.get_absolute_url }}">
+                    {{ post.title }}
+                </a>
+            </h4>
+
+        {% empty %}
+            <h4>Совпадений не найдено</h4>
+        {% endfor %}
+        <p>Искать снова</p>
+    {% else %}
+    <form method="get">
+        {{ form.as_p }}
+        <input type="submit" value="Поиск">
+    </form>
+    {% endif %}
+{% endblock %}
